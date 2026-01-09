@@ -53,28 +53,28 @@ class BaseEntityTest {
 
     @Test
     void testToString() {
-        // Arrange
+
         TestEntity entity = new TestEntity(1L);
 
-        // Act
+
         String toString = entity.toString();
 
-        // Assert - Maintenant cela affichera "BaseEntityTest$TestEntity(id=1)"
+
         assertThat(toString).contains("id=1");
-        // Vous pouvez ajuster l'assertion pour être plus flexible :
+
         assertThat(toString).contains("TestEntity");
         assertThat(toString).contains("id=1");
     }
 
     @Test
     void testNullId() {
-        // Arrange
+
         TestEntity entity = new TestEntity();
 
-        // Assert
+
         assertThat(entity.getId()).isNull();
 
-        // Test toString avec id null
+
         String toString = entity.toString();
         assertThat(toString).contains("TestEntity");
         assertThat(toString).contains("id=null");

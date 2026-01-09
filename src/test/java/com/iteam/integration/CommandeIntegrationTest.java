@@ -57,7 +57,7 @@ class CommandeIntegrationTest {
         productRepository.deleteAll();
         userRepository.deleteAll();
 
-        // Créer un utilisateur pour les tests
+
         user = new User();
         user.setFirstName("Test");
         user.setLastName("User");
@@ -65,7 +65,7 @@ class CommandeIntegrationTest {
         user.setPhoneNumber("12345678");
         user = userRepository.save(user);
 
-        // Créer un produit pour les tests
+
         product = new Product();
         product.setNameProduct("Test Product");
         product.setPrice(100.0);
@@ -76,7 +76,7 @@ class CommandeIntegrationTest {
     @Test
     @DisplayName("Scénario complet: CRUD commande")
     void fullCrudScenario() throws Exception {
-        // 1. CREATE - Utiliser CreateCommandeRequestDTO, pas Commande
+
         CreateCommandeRequestDTO requestDTO = new CreateCommandeRequestDTO();
         requestDTO.setUserId(user.getId());
         requestDTO.setProductsId(Arrays.asList(product.getId()));
@@ -89,22 +89,22 @@ class CommandeIntegrationTest {
                 .andExpect(jsonPath("$['orders'].status").value("En_attente"))
                 .andExpect(jsonPath("$['orders'].priceTotale").value(100.0));
 
-        // Vérifier en base
+
         assertThat(commandeRepository.count()).isEqualTo(1);
 
-        // 2. READ ALL
+
         mockMvc.perform(get("/api/orders"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
 
-        // 3. READ BY ID
+
         Long commandeId = commandeRepository.findAll().get(0).getId();
 
         mockMvc.perform(get("/api/orders/" + commandeId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("En_attente"));
 
-        // 4. UPDATE
+
         Commande updatedCommande = new Commande();
         updatedCommande.setStatus(Status.Livré);
         updatedCommande.setPriceTotale(150.0);
@@ -116,7 +116,7 @@ class CommandeIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Update Orders Successufully"))
                 .andExpect(jsonPath("$.orders.status").value("Livré"));
 
-        // 5. DELETE - Retourne 200 avec message
+
         mockMvc.perform(delete("/api/orders/" + commandeId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("order delete with success"));
@@ -151,7 +151,7 @@ class CommandeIntegrationTest {
     @Test
     @DisplayName("Création de commande avec plusieurs produits")
     void createCommandeWithMultipleProducts() throws Exception {
-        // Créer un deuxième produit
+
         Product product2 = new Product();
         product2.setNameProduct("Phone");
         product2.setPrice(800.0);

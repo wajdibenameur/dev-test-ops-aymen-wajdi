@@ -20,14 +20,14 @@ class GlobalExceptionsHandlerTest {
 
     @Test
     void handleNotFoundEntityExceptions_ShouldReturnNotFoundResponse() {
-        // Arrange
+
         NotFoundEntityExceptions exception = new NotFoundEntityExceptions("Ressource non trouvée");
 
-        // Act
+
         ResponseEntity<ErrorResponse> response =
                 globalExceptionsHandler.handleNotFoundEntityExceptions(exception);
 
-        // Assert
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getStatus()).isEqualTo(404);
@@ -38,14 +38,14 @@ class GlobalExceptionsHandlerTest {
 
     @Test
     void handleUserAlreadyExistsExceptions_ShouldReturnConflictResponse() {
-        // Arrange
+
         UserAlreadyExistsExceptions exception = new UserAlreadyExistsExceptions("L'utilisateur existe déjà");
 
-        // Act
+
         ResponseEntity<ErrorResponse> response =
                 globalExceptionsHandler.handleUserAlreadyExistsExceptions(exception);
 
-        // Assert
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getStatus()).isEqualTo(409);
@@ -56,14 +56,14 @@ class GlobalExceptionsHandlerTest {
 
     @Test
     void handleAllExceptions_ShouldReturnInternalServerErrorResponse() {
-        // Arrange
+
         Exception exception = new Exception("Une erreur inattendue est survenue");
 
-        // Act
+
         ResponseEntity<ErrorResponse> response =
                 globalExceptionsHandler.handleAllExceptions(exception);
 
-        // Assert
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getStatus()).isEqualTo(500);

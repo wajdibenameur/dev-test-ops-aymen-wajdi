@@ -9,17 +9,17 @@ class UpdateStatusCommandeRequestDTOTest {
 
     @Test
     void testNoArgsConstructorAndSetters() {
-        // Arrange & Act
+
         UpdateStatusCommandeRequestDTO dto = new UpdateStatusCommandeRequestDTO();
         dto.setStatus(Status.Livré);
 
-        // Assert
+
         assertThat(dto.getStatus()).isEqualTo(Status.Livré);
     }
 
     @Test
     void testAllStatusValues() {
-        // Test toutes les valeurs de votre enum
+
         UpdateStatusCommandeRequestDTO dto = new UpdateStatusCommandeRequestDTO();
 
         dto.setStatus(Status.En_attente);
@@ -37,21 +37,21 @@ class UpdateStatusCommandeRequestDTOTest {
 
     @Test
     void testGetterReturnsCorrectValue() {
-        // Arrange
+
         UpdateStatusCommandeRequestDTO dto = new UpdateStatusCommandeRequestDTO();
         dto.setStatus(Status.En_cours);
 
-        // Act & Assert
+
         assertThat(dto.getStatus()).isEqualTo(Status.En_cours);
     }
 
     @Test
     void testNullStatus() {
-        // Arrange & Act
+
         UpdateStatusCommandeRequestDTO dto = new UpdateStatusCommandeRequestDTO();
         dto.setStatus(null);
 
-        // Assert
+
         assertThat(dto.getStatus()).isNull();
     }
 }

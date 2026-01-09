@@ -42,7 +42,7 @@ class productIntegrationTest {
     @Order(1)
     @DisplayName("Scénario complet: CRUD produit")
     void fullCrudScenario() throws Exception {
-        // 1. CREATE
+
         Product newProduct = new Product();
         newProduct.setNameProduct("Laptop");
         newProduct.setPrice(1500.0);
@@ -57,16 +57,16 @@ class productIntegrationTest {
                 .andExpect(jsonPath("$.Product.quantity").value(10))
                 .andExpect(jsonPath("$.message").value("Created Product successfully"));
 
-        // Vérifier en base
+
         assertThat(productRepository.count()).isEqualTo(1);
 
-        // 2. READ ALL
+
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].nameProduct").value("Laptop"));
 
-        // 3. READ BY ID
+
         Long productId = productRepository.findAll().get(0).getId();
 
         mockMvc.perform(get("/api/products/" + productId))
@@ -74,7 +74,7 @@ class productIntegrationTest {
                 .andExpect(jsonPath("$.nameProduct").value("Laptop"))
                 .andExpect(jsonPath("$.price").value(1500.0));
 
-        // 4. UPDATE
+
         Product updatedProduct = new Product();
         updatedProduct.setNameProduct("Laptop Pro");
         updatedProduct.setPrice(2000.0);
@@ -87,7 +87,7 @@ class productIntegrationTest {
                 .andExpect(jsonPath("$.nameProduct").value("Laptop Pro"))
                 .andExpect(jsonPath("$.price").value(2000.0));
 
-        // 5. DELETE
+
         mockMvc.perform(delete("/api/products/" + productId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Product delete with success"))

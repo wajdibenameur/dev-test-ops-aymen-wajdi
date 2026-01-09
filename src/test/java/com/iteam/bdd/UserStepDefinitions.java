@@ -68,10 +68,10 @@ public class UserStepDefinitions {
     @Alors("l'utilisateur {string} existe dans la base")
     public void l_utilisateur_existe(String firstName) throws Exception {
         lastResult.andExpect(status().isCreated())
-                // FIX: Use "$.user.firstName" (lowercase u)
+
                 .andExpect(jsonPath("$.user.firstName").value(firstName));
 
-        // Also verify in database
+
         List<User> users = userRepository.findAll();
         assertThat(users).anyMatch(u -> u.getFirstName().equals(firstName));
     }
@@ -106,7 +106,7 @@ public class UserStepDefinitions {
 
     @Etantdonné("un utilisateur {string} existe avec l'ID {int}")
     public void un_utilisateur_existe_avec_id(String firstName, int id) throws Exception {
-        // Create user via API
+
         Map<String, Object> userRequest = new HashMap<>();
         userRequest.put("firstName", firstName);
         userRequest.put("lastName", "Test");
@@ -118,7 +118,7 @@ public class UserStepDefinitions {
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andExpect(status().isCreated());
 
-        // Get the ID from response
+
         String response = lastResult.andReturn().getResponse().getContentAsString();
         currentUserId = objectMapper.readTree(response).path("id").asLong();
     }

@@ -42,13 +42,13 @@ public class ProdctIntegrationTest {
     @Test
     @DisplayName("Créer un produit")
     void createProduct() throws Exception {
-        // Arrange
+
         Product newProduct = new Product();
         newProduct.setNameProduct("Laptop");
         newProduct.setPrice(1500.0);
         newProduct.setQuantity(10);
 
-        // Act & Assert
+
         mockMvc.perform(post("/api/products/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newProduct)))
@@ -57,21 +57,21 @@ public class ProdctIntegrationTest {
                 .andExpect(jsonPath("$.Product.nameProduct").value("Laptop"))
                 .andExpect(jsonPath("$.message").exists());
 
-        // Vérifier en base
+
         assertThat(productRepository.count()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("Récupérer tous les produits")
     void getAllProducts() throws Exception {
-        // Arrange - Créer un produit directement via repository
+
         Product product = new Product();
         product.setNameProduct("Test");
         product.setPrice(100.0);
         product.setQuantity(5);
         productRepository.save(product);
 
-        // Act & Assert
+
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -82,14 +82,14 @@ public class ProdctIntegrationTest {
     @Test
     @DisplayName("Récupérer un produit par ID")
     void getProductById() throws Exception {
-        // Arrange
+
         Product product = new Product();
         product.setNameProduct("Phone");
         product.setPrice(500.0);
         product.setQuantity(20);
         Product savedProduct = productRepository.save(product);
 
-        // Act & Assert
+
         mockMvc.perform(get("/api/products/" + savedProduct.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nameProduct").value("Phone"))
@@ -99,20 +99,20 @@ public class ProdctIntegrationTest {
     @Test
     @DisplayName("Supprimer un produit")
     void deleteProduct() throws Exception {
-        // Arrange
+
         Product product = new Product();
         product.setNameProduct("ToDelete");
         product.setPrice(10.0);
         product.setQuantity(1);
         Product savedProduct = productRepository.save(product);
 
-        // Act & Assert
+
         mockMvc.perform(delete("/api/products/" + savedProduct.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Product delete with success"))
                 .andExpect(jsonPath("$.id").value(savedProduct.getId().intValue()));
 
-        // Vérifier que le produit a été supprimé
+
         assertThat(productRepository.count()).isEqualTo(0);
     }
 }

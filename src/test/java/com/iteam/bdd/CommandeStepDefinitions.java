@@ -56,7 +56,7 @@ public class CommandeStepDefinitions {
         productsCache.clear();
     }
 
-    // ================= USERS =================
+
     @Etantdonné("un utilisateur {string} existe")
     public void un_utilisateur_existe(String name) {
         User user = new User();
@@ -67,7 +67,7 @@ public class CommandeStepDefinitions {
         usersCache.put(name, userRepository.save(user));
     }
 
-    // ================= PRODUCTS =================
+
     @Et("un produit {string} existe")
     public void un_produit_existe(String name) {
         Product product = new Product();
@@ -77,10 +77,10 @@ public class CommandeStepDefinitions {
         productsCache.put(name, productRepository.save(product));
     }
 
-    // ================= CREATE =================
+
     @Quand("je crée une commande pour l'utilisateur {string} avec le produit {string}")
     public void creer_commande(String userName, String productName) throws Exception {
-        // Create request map matching CreateCommandeRequestDTO
+
         Map<String, Object> request = new HashMap<>();
         request.put("userId", usersCache.get(userName).getId());
         request.put("productsId", Arrays.asList(productsCache.get(productName).getId()));
@@ -96,12 +96,12 @@ public class CommandeStepDefinitions {
 
         lastResult.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message").value("Order create with success"))
-                // FIX: Use "$.orders.status" (lowercase o) - based on your controller
+
                 .andExpect(jsonPath("$.orders.status").value(status.name()));
 
         assertThat(commandeRepository.findAll()).hasSize(1);
     }
-    // ================= LIST =================
+
     @Etantdonné("les commandes suivantes existent:")
     public void commandes_existent(DataTable table) {
         for (Map<String, String> row : table.asMaps()) {
@@ -122,7 +122,7 @@ public class CommandeStepDefinitions {
                 return productRepository.save(p);
             });
 
-            // Use service to create commande properly
+
             Map<String, Object> request = new HashMap<>();
             request.put("userId", user.getId());
             request.put("productsId", Arrays.asList(product.getId()));
@@ -149,10 +149,10 @@ public class CommandeStepDefinitions {
                 .andExpect(jsonPath("$.length()").value(count));
     }
 
-    // ================= UPDATE =================
+
     @Etantdonné("une commande existe avec le statut {string}")
     public void commande_existe(String statut) throws Exception {
-        // First create user and product
+
         User user = new User();
         user.setFirstName("Test");
         user.setLastName("User");
@@ -166,7 +166,7 @@ public class CommandeStepDefinitions {
         product.setQuantity(5);
         product = productRepository.save(product);
 
-        // Create commande via API
+
         Map<String, Object> request = new HashMap<>();
         request.put("userId", user.getId());
         request.put("productsId", Arrays.asList(product.getId()));
@@ -179,7 +179,7 @@ public class CommandeStepDefinitions {
                 .getResponse()
                 .getContentAsString();
 
-        // Extract commande ID from response
+
         currentCommandeId = objectMapper.readTree(response)
                 .path("orders")
                 .path("id")
@@ -204,7 +204,7 @@ public class CommandeStepDefinitions {
                 .andExpect(jsonPath("$.orders.status").value(convert(statut).name())); // Note: lowercase 'o'
     }
 
-    // ================= DELETE =================
+
     @Etantdonné("une commande existe")
     public void commande_existe() throws Exception {
         commande_existe("En_attente");
@@ -222,7 +222,7 @@ public class CommandeStepDefinitions {
         assertThat(commandeRepository.existsById(currentCommandeId)).isFalse();
     }
 
-    // ================= UTIL =================
+
     private Status convert(String s) {
         return Status.valueOf(s.replace("é", "e").replace("É", "E"));
     }

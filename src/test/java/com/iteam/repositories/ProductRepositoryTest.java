@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@Sql(scripts = "/schema.sql")  // ← AJOUTEZ JUSTE CETTE LIGNE
+@Sql(scripts = "/schema.sql")
 @DisplayName("Tests du repository Product")
 class ProductRepositoryTest {
 
@@ -37,13 +37,12 @@ class ProductRepositoryTest {
     @Test
     @DisplayName("Doit sauvegarder et retrouver un produit")
     void saveAndFind_ShouldWork() {
-        // Arrange
+
         Product saved = productRepository.save(product);
 
-        // Act
+
         Optional<Product> found = productRepository.findById(saved.getId());
 
-        // Assert
         assertThat(found).isPresent();
         assertThat(found.get().getNameProduct()).isEqualTo("Laptop");
         assertThat(found.get().getPrice()).isEqualTo(1500.0);
@@ -52,14 +51,14 @@ class ProductRepositoryTest {
     @Test
     @DisplayName("Doit retourner tous les produits")
     void findAll_ShouldReturnAllProducts() {
-        // Arrange
+
         productRepository.save(new Product(null, "Laptop", 1500.0, 10));
         productRepository.save(new Product(null, "Phone", 800.0, 20));
 
-        // Act
+
         List<Product> products = productRepository.findAll();
 
-        // Assert
+
         assertThat(products).hasSize(2);
         assertThat(products.get(0).getNameProduct()).isEqualTo("Laptop");
         assertThat(products.get(1).getNameProduct()).isEqualTo("Phone");
@@ -68,16 +67,16 @@ class ProductRepositoryTest {
     @Test
     @DisplayName("Doit mettre à jour un produit")
     void updateProduct_ShouldWork() {
-        // Arrange
+
         Product saved = productRepository.save(product);
         saved.setNameProduct("Laptop Updated");
         saved.setPrice(2000.0);
 
-        // Act
+
         productRepository.save(saved);
         Optional<Product> updated = productRepository.findById(saved.getId());
 
-        // Assert
+
         assertThat(updated).isPresent();
         assertThat(updated.get().getNameProduct()).isEqualTo("Laptop Updated");
         assertThat(updated.get().getPrice()).isEqualTo(2000.0);
@@ -86,15 +85,15 @@ class ProductRepositoryTest {
     @Test
     @DisplayName("Doit supprimer un produit")
     void deleteProduct_ShouldWork() {
-        // Arrange
+
         Product saved = productRepository.save(product);
         Long productId = saved.getId();
 
-        // Act
+
         productRepository.deleteById(productId);
         Optional<Product> found = productRepository.findById(productId);
 
-        // Assert
+
         assertThat(found).isEmpty();
     }
 }

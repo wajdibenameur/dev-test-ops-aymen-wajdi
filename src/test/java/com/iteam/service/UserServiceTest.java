@@ -54,13 +54,13 @@ class UserServiceTest {
     @Test
     @DisplayName("Doit créer un utilisateur avec succès")
     void createUser_Success() {
-        // Arrange
+
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        // Act
+
         User result = userService.createUser(user);
 
-        // Assert
+
         assertThat(result).isNotNull();
         assertThat(result.getFirstName()).isEqualTo("Ahmed");
         verify(userRepository, times(1)).save(user);
@@ -69,14 +69,14 @@ class UserServiceTest {
     @Test
     @DisplayName("Doit retourner tous les utilisateurs")
     void findAll_Success() {
-        // Arrange
+
         List<User> users = Arrays.asList(user, user2);
         when(userRepository.findAll()).thenReturn(users);
 
-        // Act
+
         List<User> result = userService.findAll();
 
-        // Assert
+
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getFirstName()).isEqualTo("Ahmed");
         assertThat(result.get(1).getFirstName()).isEqualTo("Fatma");
@@ -85,13 +85,13 @@ class UserServiceTest {
     @Test
     @DisplayName("Doit trouver un utilisateur par ID")
     void findUserById_Found() {
-        // Arrange
+
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        // Act
+
         User result = userService.findUserById(1L);
 
-        // Assert
+
         assertThat(result).isNotNull();
         assertThat(result.getFirstName()).isEqualTo("Ahmed");
     }
@@ -99,33 +99,33 @@ class UserServiceTest {
     @Test
     @DisplayName("Doit lancer une exception si utilisateur non trouvé")
     void findUserById_NotFound() {
-        // Arrange
+
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+
         assertThatThrownBy(() -> userService.findUserById(99L))
                 .isInstanceOf(NotFoundEntityExceptions.class)
-                .hasMessage("No User present with the ID: 99"); // Message EXACT
+                .hasMessage("No User present with the ID: 99");
     }
 
     @Test
     @DisplayName("Doit supprimer un utilisateur")
     void deleteUserById_Success() {
-        // Arrange
+
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         doNothing().when(userRepository).delete(any(User.class));
 
-        // Act
+
         userService.deleteUserById(1L);
 
-        // Assert
+
         verify(userRepository, times(1)).delete(user);
     }
 
     @Test
     @DisplayName("Doit mettre à jour un utilisateur existant")
     void updateUser_Success() {
-        // Arrange
+
         User userToUpdate = new User();
         userToUpdate.setFirstName("Ahmed Updated");
         userToUpdate.setLastName("New Lastname");
@@ -135,10 +135,10 @@ class UserServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(userToUpdate);
 
-        // Act
+
         User result = userService.updateUser(1L, userToUpdate);
 
-        // Assert
+
         assertThat(result).isNotNull();
         assertThat(result.getFirstName()).isEqualTo("Ahmed Updated");
         verify(userRepository, times(1)).save(any(User.class));

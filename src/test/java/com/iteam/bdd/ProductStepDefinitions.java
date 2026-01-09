@@ -60,41 +60,41 @@ public class ProductStepDefinitions {
 
     @Etantdonné("un produit {string} existe avec l'ID {int}")
     public void un_produit_existe_avec_l_id(String productName, int referenceId) throws Exception {
-        // Créer le produit via l'API
+
         Map<String, Object> productRequest = new HashMap<>();
         productRequest.put("nameProduct", productName);
         productRequest.put("price", 1000.0);
         productRequest.put("quantity", 10);
 
-        // Effectuer la requête et stocker le résultat
+
         lastMvcResult = mockMvc.perform(post("/api/products/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productRequest)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        // Extraire la réponse
+
         String response = lastMvcResult.getResponse().getContentAsString();
         System.out.println("DEBUG - Product creation response: " + response);
 
-        // Parser la réponse JSON
+
         JsonNode jsonNode = objectMapper.readTree(response);
 
-        // Extraire l'ID du produit selon la structure de réponse
+
         if (jsonNode.has("Product") && jsonNode.get("Product").has("id")) {
-            // Structure: {"Product": {"id": 1, ...}}
+
             currentProductId = jsonNode.get("Product").get("id").asLong();
         } else if (jsonNode.has("id")) {
-            // Structure: {"id": 1, ...}
+
             currentProductId = jsonNode.get("id").asLong();
         } else {
-            // Structure: {"product": {"id": 1, ...}}
+
             currentProductId = jsonNode.get("product").get("id").asLong();
         }
 
         System.out.println("DEBUG - Extracted product ID: " + currentProductId);
 
-        // Préparer lastResult pour les assertions futures
+
         lastResult = mockMvc.perform(get("/api/products/" + currentProductId));
     }
 
@@ -105,7 +105,7 @@ public class ProductStepDefinitions {
         productRequest.put("price", Double.parseDouble(price));
         productRequest.put("quantity", Integer.parseInt(quantity));
 
-        // Effectuer la requête et stocker le résultat
+
         lastResult = mockMvc.perform(post("/api/products/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productRequest)));
@@ -113,14 +113,14 @@ public class ProductStepDefinitions {
 
     @Alors("le produit {string} existe dans la base")
     public void le_produit_existe_dans_la_base(String productName) throws Exception {
-        // Vérifier le statut HTTP
+
         lastResult.andExpect(status().isCreated());
 
-        // Extraire et afficher la réponse pour débogage
+
         String response = lastResult.andReturn().getResponse().getContentAsString();
         System.out.println("DEBUG - Actual response: " + response);
 
-        // Essayer différentes structures JSON possibles
+
         try {
             lastResult.andExpect(jsonPath("$.Product.nameProduct").value(productName));
         } catch (AssertionError e1) {
@@ -131,7 +131,7 @@ public class ProductStepDefinitions {
             }
         }
 
-        // Vérifier aussi dans la base de données
+
         List<Product> products = productRepository.findAll();
         assertThat(products).hasSize(1);
         assertThat(products.get(0).getNameProduct()).isEqualTo(productName);
@@ -166,7 +166,7 @@ public class ProductStepDefinitions {
 
     @Quand("je mets à jour le produit {int} avec le nom {string} et prix {string}")
     public void je_mets_à_jour_le_produit_avec_le_nom_et_prix(int referenceId, String newName, String newPrice) throws Exception {
-        // Utiliser l'ID réel si disponible, sinon utiliser la référence
+
         Long productId = currentProductId != null ? currentProductId : (long) referenceId;
 
         Map<String, Object> updateRequest = new HashMap<>();
@@ -183,12 +183,12 @@ public class ProductStepDefinitions {
     public void le_produit_a_le_nom_et_prix(int referenceId, String expectedName, String expectedPrice) throws Exception {
         lastResult.andExpect(status().isOk());
 
-        // Essayer différentes structures JSON
+
         try {
             lastResult.andExpect(jsonPath("$.nameProduct").value(expectedName))
                     .andExpect(jsonPath("$.price").value(Double.parseDouble(expectedPrice)));
         } catch (AssertionError e) {
-            // Si la réponse est encapsulée
+
             lastResult.andExpect(jsonPath("$.Product.nameProduct").value(expectedName))
                     .andExpect(jsonPath("$.Product.price").value(Double.parseDouble(expectedPrice)));
         }
@@ -196,7 +196,7 @@ public class ProductStepDefinitions {
 
     @Quand("je supprime le produit avec l'ID {int}")
     public void je_supprime_le_produit_avec_l_id(int referenceId) throws Exception {
-        // Utiliser l'ID réel si disponible, sinon utiliser la référence
+
         Long productId = currentProductId != null ? currentProductId : (long) referenceId;
 
         lastResult = mockMvc.perform(delete("/api/products/" + productId));
@@ -207,12 +207,12 @@ public class ProductStepDefinitions {
         lastResult.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Product delete with success"));
 
-        // Utiliser l'ID réel si disponible, sinon utiliser la référence
+
         Long productId = currentProductId != null ? currentProductId : (long) referenceId;
         assertThat(productRepository.existsById(productId)).isFalse();
     }
 
-    // Méthode utilitaire pour obtenir le contenu de la réponse
+
     private String getResponseContent() throws Exception {
         if (lastMvcResult != null) {
             return lastMvcResult.getResponse().getContentAsString();

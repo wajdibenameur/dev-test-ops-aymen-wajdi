@@ -80,14 +80,14 @@ class CommandeControllerTest {
     @Test
     @DisplayName("POST /api/orders/create - Créer une commande")
     void createCommande_Success() throws Exception {
-        // Arrange
+
         CreateCommandeRequestDTO requestDTO = new CreateCommandeRequestDTO();
         requestDTO.setUserId(1L);
         requestDTO.setProductsId(Arrays.asList(1L));
 
         when(commandeService.createCommande(1L, Arrays.asList(1L))).thenReturn(commande);
 
-        // Act & Assert - Utiliser /api/orders (sans 'r' à ordres)
+
         mockMvc.perform(post("/api/orders/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
@@ -101,11 +101,11 @@ class CommandeControllerTest {
     @Test
     @DisplayName("GET /api/orders - Liste toutes les commandes")
     void findAllCommandes_Success() throws Exception {
-        // Arrange
+
         List<Commande> commandes = Arrays.asList(commande);
         when(commandeService.findAll()).thenReturn(commandes);
 
-        // Act & Assert
+
         mockMvc.perform(get("/api/orders"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
@@ -116,10 +116,10 @@ class CommandeControllerTest {
     @Test
     @DisplayName("GET /api/orders/{id} - Trouver une commande par ID")
     void findCommandeById_Success() throws Exception {
-        // Arrange
+
         when(commandeService.findCommandeById(1L)).thenReturn(commande);
 
-        // Act & Assert
+
         mockMvc.perform(get("/api/orders/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
@@ -129,11 +129,11 @@ class CommandeControllerTest {
     @Test
     @DisplayName("GET /api/orders/{id} - Commande non trouvée")
     void findCommandeById_NotFound() throws Exception {
-        // Arrange
+
         when(commandeService.findCommandeById(99L))
                 .thenThrow(new com.iteam.Exceptions.NotFoundEntityExceptions("Commande with ID : 99 not found"));
 
-        // Act & Assert
+
         mockMvc.perform(get("/api/orders/99"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Commande with ID : 99 not found"))
@@ -143,7 +143,7 @@ class CommandeControllerTest {
     @Test
     @DisplayName("PUT /api/orders/{id} - Mettre à jour le statut d'une commande")
     void updateCommande_Success() throws Exception {
-        // Arrange
+
         Commande updatedCommande = new Commande();
         updatedCommande.setId(1L);
         updatedCommande.setStatus(Status.Livré);
@@ -151,7 +151,7 @@ class CommandeControllerTest {
 
         when(commandeService.updateCommande(eq(1L), any(Commande.class))).thenReturn(updatedCommande);
 
-        // Act & Assert - Utiliser "orders" (minuscule)
+
         mockMvc.perform(put("/api/orders/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedCommande)))
@@ -165,7 +165,7 @@ class CommandeControllerTest {
     @Test
     @DisplayName("PUT /api/orders/{id} - Mettre à jour une commande (En_cours)")
     void updateCommande_EnCours() throws Exception {
-        // Arrange
+
         Commande updatedCommande = new Commande();
         updatedCommande.setId(1L);
         updatedCommande.setStatus(Status.En_cours);
@@ -173,7 +173,7 @@ class CommandeControllerTest {
 
         when(commandeService.updateCommande(eq(1L), any(Commande.class))).thenReturn(updatedCommande);
 
-        // Act & Assert
+
         mockMvc.perform(put("/api/orders/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedCommande)))
@@ -194,7 +194,7 @@ class CommandeControllerTest {
 
         when(commandeService.updateCommande(eq(1L), any(Commande.class))).thenReturn(updatedCommande);
 
-        // Act & Assert
+
         mockMvc.perform(put("/api/orders/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedCommande)))
@@ -207,10 +207,10 @@ class CommandeControllerTest {
     @Test
     @DisplayName("DELETE /api/orders/{id} - Supprimer une commande")
     void deleteCommande_Success() throws Exception {
-        // Arrange
+
         doNothing().when(commandeService).deleteCommande(1L);
 
-        // Act & Assert
+
         mockMvc.perform(delete("/api/orders/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("order delete with success"))
@@ -220,11 +220,11 @@ class CommandeControllerTest {
     @Test
     @DisplayName("DELETE /api/orders/{id} - Commande non trouvée")
     void deleteCommande_NotFound() throws Exception {
-        // Arrange
+
         doThrow(new com.iteam.Exceptions.NotFoundEntityExceptions("No Orders with the ID: 99"))
                 .when(commandeService).deleteCommande(99L);
 
-        // Act & Assert
+
         mockMvc.perform(delete("/api/orders/99"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("No Orders with the ID: 99"))
@@ -234,7 +234,7 @@ class CommandeControllerTest {
     @Test
     @DisplayName("POST /api/orders/create - Créer commande avec différents statuts")
     void createCommande_WithDifferentStatus() throws Exception {
-        // Test avec statut En_cours
+
         CreateCommandeRequestDTO requestDTO = new CreateCommandeRequestDTO();
         requestDTO.setUserId(1L);
         requestDTO.setProductsId(Arrays.asList(1L));
@@ -262,20 +262,20 @@ class CommandeControllerTest {
     @Test
     @DisplayName("GET /api/orders - Liste vide")
     void findAllCommandes_EmptyList() throws Exception {
-        // Arrange
+
         when(commandeService.findAll()).thenReturn(Arrays.asList());
 
-        // Act & Assert
+
         mockMvc.perform(get("/api/orders"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
     }
 
-    // Test supplémentaire pour la consistance
+
     @Test
     @DisplayName("POST /api/orders/create - Vérifier la structure de la réponse")
     void createCommande_ResponseStructure() throws Exception {
-        // Arrange
+
         CreateCommandeRequestDTO requestDTO = new CreateCommandeRequestDTO();
         requestDTO.setUserId(1L);
         requestDTO.setProductsId(Arrays.asList(1L));
@@ -289,7 +289,7 @@ class CommandeControllerTest {
         when(commandeService.createCommande(eq(1L), eq(Arrays.asList(1L))))
                 .thenReturn(newCommande);
 
-        // Act & Assert
+
         mockMvc.perform(post("/api/orders/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))

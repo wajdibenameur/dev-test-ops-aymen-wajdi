@@ -53,24 +53,24 @@ class UserIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newUser)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.user.firstName").value("Ahmed"));  // Correction ici
+                .andExpect(jsonPath("$.user.firstName").value("Ahmed"));
 
-        // Vérifier en base
+
         assertThat(userRepository.count()).isEqualTo(1);
 
-        // 2. READ ALL
+
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
 
-        // 3. READ BY ID
+
         Long userId = userRepository.findAll().get(0).getId();
 
         mockMvc.perform(get("/api/users/" + userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("ahmed@email.com"));
 
-        // 4. UPDATE
+
         User updatedUser = new User();
         updatedUser.setFirstName("Ahmed Updated");
         updatedUser.setLastName("New Lastname");
@@ -81,13 +81,12 @@ class UserIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedUser)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("Ahmed Updated"));  // Ici, la réponse est l'utilisateur
+                .andExpect(jsonPath("$.firstName").value("Ahmed Updated"));
 
-        // 5. DELETE - Votre contrôleur retourne 200 avec message, pas 204
+
         mockMvc.perform(delete("/api/users/" + userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").exists());
-
         assertThat(userRepository.count()).isEqualTo(0);
     }
 }
