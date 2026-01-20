@@ -2,17 +2,14 @@ package com.iteam.Exceptions;
 
 public class NotFoundEntityExceptions extends RuntimeException {
 
-    private String message;
+
 
     public NotFoundEntityExceptions() {
-
+    super();
     }
 
     public NotFoundEntityExceptions(String message) {
         super(message);
-        this.message = message;
     }
-
-
 
 }
