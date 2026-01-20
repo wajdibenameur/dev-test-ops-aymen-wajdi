@@ -41,10 +41,10 @@ jobs:
         run: |
           echo "Checking JaCoCo report..."
           if [ -f "target/site/jacoco/jacoco.xml" ]; then
-            echo "✅ JaCoCo XML report found"
+            echo " JaCoCo XML report found"
             echo "Lines in report: $(wc -l < target/site/jacoco/jacoco.xml)"
           else
-            echo "❌ JaCoCo XML report not found!"
+            echo " JaCoCo XML report not found!"
             find . -name "jacoco.xml" -type f
             exit 1
           fi
