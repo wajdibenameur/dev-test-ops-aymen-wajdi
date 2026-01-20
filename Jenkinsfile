@@ -9,6 +9,10 @@ pipeline {
         APP_NAME = 'mon-app-springboot'
     }
 
+    triggers {
+        githubPush()  // <-- c'est ici
+    }
+
     stages {
         stage('Checkout') {
             steps {
