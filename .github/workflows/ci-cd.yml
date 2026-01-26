@@ -83,7 +83,7 @@ jobs:
                        -t $IMAGE_NAME:$BRANCH_NAME-$DATE_TAG .
 
       - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@v1
+        uses: aquasecurity/trivy-action@0.20.0
         with:
           image-ref: $IMAGE_NAME:latest
           format: table
