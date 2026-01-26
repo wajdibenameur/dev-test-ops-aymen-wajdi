@@ -11,6 +11,7 @@ jobs:
   test-and-analysis:
     name: Tests & Code Analysis
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,13 +25,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
       - name: Build and run tests with coverage
         run: |
           mvn clean verify
@@ -38,12 +32,7 @@ jobs:
 
       - name: Verify JaCoCo report exists
         run: |
-          if [ -f "target/site/jacoco/jacoco.xml" ]; then
-            echo "JaCoCo XML report found"
-          else
-            echo "JaCoCo XML report not found!"
-            exit 1
-          fi
+          test -f target/site/jacoco/jacoco.xml
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
@@ -60,7 +49,6 @@ jobs:
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
             -Dsonar.junit.reportPaths=target/surefire-reports
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.scm.provider=git
             -Dsonar.branch.name=${{ github.ref_name }}
 
   docker-deploy:
@@ -85,22 +73,24 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Log in to DockerHub
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set image tags
         run: |
-          echo "IMAGE_NAME=projectfed" >> $GITHUB_ENV
+          echo "IMAGE_NAME=wajdibenameur/projectfed" >> $GITHUB_ENV
           echo "COMMIT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
 
       - name: Build Docker image
         run: |
-          docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$COMMIT_SHA .
+          docker build \
+            -t $IMAGE_NAME:latest \
+            -t $IMAGE_NAME:$COMMIT_SHA .
 
-      - name: Push Docker images
+      - name: Push Docker image
         run: |
           docker push $IMAGE_NAME:latest
           docker push $IMAGE_NAME:$COMMIT_SHA
