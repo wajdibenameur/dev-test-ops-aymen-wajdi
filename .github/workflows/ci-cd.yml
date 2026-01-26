@@ -81,7 +81,7 @@ jobs:
 
       - name: Set image tags
         run: |
-          echo "IMAGE_NAME=wajdibenameur/projectfed" >> $GITHUB_ENV
+          echo "IMAGE_NAME=wajdiuser/projectfed" >> $GITHUB_ENV
           echo "COMMIT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
 
       - name: Build Docker image
