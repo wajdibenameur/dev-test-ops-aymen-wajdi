@@ -122,21 +122,27 @@ jobs:
           kubectl version --client
           kubectl config current-context
 
-      # Si besoin de démarrer Minikube (optionnel)
+      # Démarrer Minikube si nécessaire
       - name: Start Minikube (optional)
         run: minikube start --driver=docker
 
-      # Déployer MySQL
-      - name: Apply MySQL Deployment
-        run: kubectl apply -f k8s/mysql.yaml
-
-      # Déployer Spring Boot Deployment & Service
-      - name: Apply Spring Boot Deployment & Service
+      # Créer le Secret MySQL de manière sécurisée à partir des GitHub Secrets
+      - name: Create MySQL Secret from GitHub Secrets
         run: |
-          # Remplace les variables d'environnement dans deployment.yaml
+          kubectl create secret generic mysql-secret \
+            --from-literal=MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
+            --from-literal=MYSQL_USER=${{ secrets.MYSQL_USER }} \
+            --from-literal=MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
+            --from-literal=MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy MySQL
+        run: kubectl apply -f k8s/mysql.yml
+
+      - name: Deploy Spring Boot App
+        run: |
           envsubst < k8s/deployment.yaml | kubectl apply -f -
           kubectl apply -f k8s/service.yaml
 
-      # Vérifier l'état des Pods
       - name: Check Pods Status
         run: kubectl get pods -o wide
