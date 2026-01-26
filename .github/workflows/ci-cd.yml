@@ -104,9 +104,9 @@ jobs:
           docker push $IMAGE_NAME:latest
           docker push $IMAGE_NAME:$IMAGE_TAG
 
-# ======================================================
-# 3. DEPLOIEMENT KUBERNETES (MINIKUBE)
-# ======================================================
+  # ======================================================
+  # 3. DEPLOIEMENT KUBERNETES (MINIKUBE)
+  # ======================================================
   kubernetes-deploy:
     name: Deploy to Minikube Kubernetes
     runs-on: [ self-hosted, Windows, X64 ]
@@ -115,34 +115,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Vérifier que Minikube et kubectl sont accessibles
       - name: Check Minikube status
+        shell: pwsh
         run: |
           minikube status
           kubectl version --client
           kubectl config current-context
 
-      # Démarrer Minikube si nécessaire
-      - name: Start Minikube (optional)
-        run: minikube start --driver=docker
-
-      # Créer le Secret MySQL de manière sécurisée à partir des GitHub Secrets
-      - name: Create MySQL Secret from GitHub Secrets
+      - name: Start Minikube
+        shell: pwsh
         run: |
-          kubectl create secret generic mysql-secret \
-            --from-literal=MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
-            --from-literal=MYSQL_USER=${{ secrets.MYSQL_USER }} \
-            --from-literal=MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
-            --from-literal=MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} \
+          minikube start --driver=docker
+
+      # SECRET CRÉÉ DEPUIS GITHUB SECRETS (VERSION WINDOWS OK)
+      - name: Create MySQL Secret from GitHub Secrets
+        shell: pwsh
+        run: |
+          kubectl create secret generic mysql-secret `
+            --from-literal=MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} `
+            --from-literal=MYSQL_USER=${{ secrets.MYSQL_USER }} `
+            --from-literal=MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} `
+            --from-literal=MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} `
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy MySQL
+        shell: pwsh
         run: kubectl apply -f k8s/mysql.yml
 
       - name: Deploy Spring Boot App
+        shell: pwsh
         run: |
-          envsubst < k8s/deployment.yaml | kubectl apply -f -
+          kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
 
       - name: Check Pods Status
+        shell: pwsh
         run: kubectl get pods -o wide
