@@ -107,36 +107,36 @@ jobs:
 # ======================================================
 # 3. DEPLOIEMENT KUBERNETES (MINIKUBE)
 # ======================================================
-kubernetes-deploy:
-  name: Deploy to Minikube Kubernetes
-  runs-on: [self-hosted, Windows, X64]
-  needs: docker-deploy
+  kubernetes-deploy:
+    name: Deploy to Minikube Kubernetes
+    runs-on: [ self-hosted, Windows, X64 ]
+    needs: docker-deploy
 
-  steps:
-    - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-    # Vérifier que Minikube et kubectl sont accessibles
-    - name: Check Minikube status
-      run: |
-        minikube status
-        kubectl version --client
-        kubectl config current-context
+      # Vérifier que Minikube et kubectl sont accessibles
+      - name: Check Minikube status
+        run: |
+          minikube status
+          kubectl version --client
+          kubectl config current-context
 
-    # Si besoin de démarrer Minikube (optionnel)
-    - name: Start Minikube (optional)
-      run: minikube start --driver=docker
+      # Si besoin de démarrer Minikube (optionnel)
+      - name: Start Minikube (optional)
+        run: minikube start --driver=docker
 
-    # Déployer MySQL
-    - name: Apply MySQL Deployment
-      run: kubectl apply -f k8s/mysql.yaml
+      # Déployer MySQL
+      - name: Apply MySQL Deployment
+        run: kubectl apply -f k8s/mysql.yaml
 
-    # Déployer Spring Boot Deployment & Service
-    - name: Apply Spring Boot Deployment & Service
-      run: |
-        # Remplace les variables d'environnement dans deployment.yaml
-        envsubst < k8s/deployment.yaml | kubectl apply -f -
-        kubectl apply -f k8s/service.yaml
+      # Déployer Spring Boot Deployment & Service
+      - name: Apply Spring Boot Deployment & Service
+        run: |
+          # Remplace les variables d'environnement dans deployment.yaml
+          envsubst < k8s/deployment.yaml | kubectl apply -f -
+          kubectl apply -f k8s/service.yaml
 
-    # Vérifier l'état des Pods
-    - name: Check Pods Status
-      run: kubectl get pods -o wide
+      # Vérifier l'état des Pods
+      - name: Check Pods Status
+        run: kubectl get pods -o wide
