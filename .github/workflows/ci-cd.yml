@@ -8,30 +8,29 @@ on:
   workflow_dispatch:
 
 jobs:
-  # ======================================================
-  # 1. TESTS + ANALYSE CODE
-  # ======================================================
+
   test-and-analysis:
     name: Tests & Code Analysis
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
 
-      - name: Build and run tests with coverage
+      - name: Build & Test with Coverage
         run: |
           mvn clean verify
           mvn jacoco:report
 
-      - name: Verify JaCoCo report
+      - name: Verify JaCoCo Report
         run: test -f target/site/jacoco/jacoco.xml
 
       - name: SonarCloud Scan
@@ -48,29 +47,21 @@ jobs:
             -Dsonar.java.binaries=target/classes
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
             -Dsonar.junit.reportPaths=target/surefire-reports
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.scm.provider=git
             -Dsonar.branch.name=${{ github.ref_name }}
 
-  # ======================================================
-  # 2. DOCKER BUILD + TRIVY + PUSH
-  # ======================================================
-  docker-deploy:
+  docker-build-scan:
     name: Build, Scan & Push Docker Image
     runs-on: ubuntu-latest
     needs: test-and-analysis
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Build JAR
-        run: mvn clean package -DskipTests
-
-      - uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -78,29 +69,57 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Generate image tags
+      - name: Set image tags
         run: |
-          BRANCH=${GITHUB_REF_NAME}
-          DATE=$(date +%Y%m%d)
-          SHA=${GITHUB_SHA::8}
-
           echo "IMAGE_NAME=wajdiuser/projectfed" >> $GITHUB_ENV
-          echo "IMAGE_TAG=${BRANCH}-${DATE}-${SHA}" >> $GITHUB_ENV
+          echo "COMMIT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
+          echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "DATE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
       - name: Build Docker image
         run: |
-          docker build \
-            -t $IMAGE_NAME:latest \
-            -t $IMAGE_NAME:$IMAGE_TAG .
+          docker build -t $IMAGE_NAME:latest \
+                       -t $IMAGE_NAME:$COMMIT_SHA \
+                       -t $IMAGE_NAME:$BRANCH_NAME-$DATE_TAG .
 
-      - name: Security Scan with Trivy
-        uses: aquasecurity/trivy-action@0.20.0
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@v1
         with:
-          image-ref: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-          severity: CRITICAL,HIGH
+          image-ref: $IMAGE_NAME:latest
+          format: table
           exit-code: 1
 
       - name: Push Docker images
         run: |
           docker push $IMAGE_NAME:latest
-          docker push $IMAGE_NAME:$IMAGE_TAG
+          docker push $IMAGE_NAME:$COMMIT_SHA
+          docker push $IMAGE_NAME:$BRANCH_NAME-$DATE_TAG
+
+  kubernetes-deploy:
+    name: Deploy to Minikube Kubernetes
+    runs-on: ubuntu-latest
+    needs: docker-build-scan
+
+    steps:
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: '1.30.0'
+
+      - name: Set up Kubeconfig for Minikube
+        run: |
+          mkdir -p $HOME/.kube
+          minikube start
+          minikube kubectl -- get pods
+
+      - name: Apply MySQL deployment
+        run: |
+          kubectl apply -f k8s/mysql.yaml
+
+      - name: Apply Spring Boot Deployment
+        run: |
+          envsubst < k8s/deployment.yaml | kubectl apply -f -
+          kubectl apply -f k8s/service.yaml
+
+      - name: Check Pods Status
+        run: kubectl get pods -o wide
