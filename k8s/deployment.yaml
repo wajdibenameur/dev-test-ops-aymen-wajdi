@@ -17,11 +17,18 @@ spec:
           image: wajdiuser/projectfed:latest
           ports:
             - containerPort: 8090
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: k8s
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql-service:3306/projectfed?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+              value: jdbc:mysql://mysql-service:3306/projectfed?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -32,16 +39,3 @@ spec:
                 secretKeyRef:
                   name: mysql-secret
                   key: MYSQL_PASSWORD
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: springboot-service
-spec:
-  selector:
-    app: springboot-app
-  ports:
-    - protocol: TCP
-      port: 8090
-      targetPort: 8090
-  type: NodePort

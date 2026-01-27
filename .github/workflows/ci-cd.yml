@@ -104,9 +104,9 @@ jobs:
           docker push $IMAGE_NAME:latest
           docker push $IMAGE_NAME:$IMAGE_TAG
 
-  # ======================================================
-  # 3. DEPLOIEMENT KUBERNETES (MINIKUBE)
-  # ======================================================
+# ======================================================
+# 3. DEPLOIEMENT KUBERNETES (MINIKUBE)
+# ======================================================
   kubernetes-deploy:
     name: Deploy to Minikube Kubernetes
     runs-on: [ self-hosted, Windows, X64 ]
@@ -141,10 +141,17 @@ jobs:
         shell: powershell
         run: kubectl apply -f k8s/mysql.yml
 
+      - name: Wait for MySQL to be ready
+        shell: powershell
+        run: |
+          # Attendre que le pod MySQL soit ready avant de continuer
+          kubectl wait --for=condition=ready pod -l app=mysql --timeout=120s
+
       - name: Deploy Spring Boot App
         shell: powershell
         run: |
           kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
 
       - name: Check Pods Status
         shell: powershell
