@@ -156,3 +156,33 @@ jobs:
       - name: Check Pods Status
         shell: powershell
         run: kubectl get pods -o wide
+# ======================================================
+# 4. DEPLOIEMENT MONITORING (Prometheus + Grafana)
+# ======================================================
+  monitoring-deploy:
+    name: Deploy Prometheus & Grafana
+    runs-on: [ self-hosted, Windows, X64 ]
+    needs: kubernetes-deploy
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply Prometheus
+        shell: powershell
+        run: |
+          kubectl apply -f k8s/prometheus.yml
+
+      - name: Apply Grafana
+        shell: powershell
+        run: |
+          kubectl apply -f k8s/grafana.yml
+
+      - name: Wait for Monitoring Pods Ready
+        shell: powershell
+        run: |
+          kubectl wait --for=condition=ready pod -l app=prometheus -n monitoring --timeout=120s
+          kubectl wait --for=condition=ready pod -l app=grafana -n monitoring --timeout=120s
+
+      - name: Show Pods Status
+        shell: powershell
+        run: kubectl get pods -n monitoring -o wide
