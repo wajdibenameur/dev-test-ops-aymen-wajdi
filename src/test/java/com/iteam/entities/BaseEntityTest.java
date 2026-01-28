@@ -1,0 +1,82 @@
+package com.iteam.entities;
+
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class BaseEntityTest {
+
+    // Création d'une classe concrète pour le test
+    @lombok.ToString(callSuper = true)
+    static class TestEntity extends BaseEntity {
+        public TestEntity() {
+            super();
+        }
+
+        public TestEntity(Long id) {
+            super(id);
+        }
+    }
+
+    @Test
+    void testNoArgsConstructorAndSetters() {
+        // Arrange & Act
+        TestEntity entity = new TestEntity();
+        entity.setId(1L);
+
+        // Assert
+        assertThat(entity.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void testAllArgsConstructor() {
+        // Arrange & Act
+        TestEntity entity = new TestEntity(1L);
+
+        // Assert
+        assertThat(entity.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void testEqualsAndHashCode() {
+        // Arrange
+        TestEntity entity1 = new TestEntity(1L);
+        TestEntity entity2 = new TestEntity(1L);
+        TestEntity entity3 = new TestEntity(2L);
+
+        // Assert
+        assertThat(entity1).isEqualTo(entity2);
+        assertThat(entity1.hashCode()).isEqualTo(entity2.hashCode());
+        assertThat(entity1).isNotEqualTo(entity3);
+        assertThat(entity1.hashCode()).isNotEqualTo(entity3.hashCode());
+    }
+
+    @Test
+    void testToString() {
+
+        TestEntity entity = new TestEntity(1L);
+
+
+        String toString = entity.toString();
+
+
+        assertThat(toString).contains("id=1");
+
+        assertThat(toString).contains("TestEntity");
+        assertThat(toString).contains("id=1");
+    }
+
+    @Test
+    void testNullId() {
+
+        TestEntity entity = new TestEntity();
+
+
+        assertThat(entity.getId()).isNull();
+
+
+        String toString = entity.toString();
+        assertThat(toString).contains("TestEntity");
+        assertThat(toString).contains("id=null");
+    }
+}
