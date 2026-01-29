@@ -161,8 +161,8 @@ jobs:
       - name: Deploy Frontend on Minikube
         shell: bash
         run: |
-          kubectl apply -f k8s/frontend-deployment.yaml
-          kubectl apply -f k8s/frontend-service.yaml
+          kubectl apply -f k8s/frontend-deployment.yaml --validate=false
+          kubectl apply -f k8s/frontend-service.yaml --validate=false
           kubectl get pods -o wide
 
   # ======================================================
