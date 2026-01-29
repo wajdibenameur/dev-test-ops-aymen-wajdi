@@ -21,13 +21,9 @@ RUN npm run build -- --configuration=production
 # =========================
 # Stage 2: Serve with Nginx
 # =========================
+
 FROM nginx:alpine
-
-# Copier les fichiers build Angular vers le répertoire Nginx
 COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
-
-# Exposer le port
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-
-# Démarrer Nginx
 CMD ["nginx", "-g", "daemon off;"]
