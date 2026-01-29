@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "http://myapp.local",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
