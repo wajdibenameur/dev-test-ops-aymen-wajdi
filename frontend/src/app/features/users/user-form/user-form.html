@@ -1,0 +1,20 @@
+<!-- user-form.component.html -->
+<div class="card p-3 mb-4 shadow">
+  <h5>{{ model.id ? 'Modifier User' : 'Ajouter User' }}</h5>
+  <form (ngSubmit)="save()" #userForm="ngForm">
+    <div class="mb-2">
+      <input type="text" class="form-control" placeholder="First Name" [(ngModel)]="model.firstName" name="firstName" required>
+    </div>
+    <div class="mb-2">
+      <input type="text" class="form-control" placeholder="Last Name" [(ngModel)]="model.lastName" name="lastName" required>
+    </div>
+    <div class="mb-2">
+      <input type="email" class="form-control" placeholder="Email" [(ngModel)]="model.email" name="email" required>
+    </div>
+    <div class="mb-2">
+      <input type="text" class="form-control" placeholder="Phone" [(ngModel)]="model.phoneNumber" name="phoneNumber" required>
+    </div>
+    <button class="btn btn-success me-2" type="submit">💾 Save</button>
+    <button class="btn btn-secondary" type="button" (click)="cancel()">❌ Cancel</button>
+  </form>
+</div>

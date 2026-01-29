@@ -1,0 +1,19 @@
+/* Order Form Placeholder Styles */
+p {
+  font-size: 18px;
+  color: #666;
+  text-align: center;
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  p {
+    font-size: 16px;
+    padding: 15px;
+  }
+}

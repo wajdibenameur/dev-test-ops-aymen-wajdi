@@ -1,0 +1,29 @@
+<table class="table table-bordered table-striped">
+  <thead class="table-light">
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Prix</th>
+      <th>Quantité</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let p of products">
+      <td>{{p.id}}</td>
+      <td>{{p.nameProduct}}</td>
+      <td>{{p.price}}</td>
+      <td>{{p.quantity}}</td>
+      <td>
+        <button class="btn btn-sm btn-warning me-1" (click)="edit(p)">✏️</button>
+        <button class="btn btn-sm btn-danger" (click)="delete(p.id!)">🗑️</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<app-product-form
+  *ngIf="showForm"
+  [product]="selectedProduct"
+  (close)="showForm=false">
+</app-product-form>

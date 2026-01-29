@@ -1,0 +1,71 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" routerLink="/">Ecommerce</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" routerLink="/users"><i class="bi bi-people"></i> Users</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/products"><i class="bi bi-box-seam"></i> Products</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/orders"><i class="bi bi-receipt"></i> Orders</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section d-flex align-items-center justify-content-center">
+  <div class="text-center text-white">
+    <h1 class="display-4 fw-bold mb-3">{{ greeting }}</h1>
+    <p class="lead mb-4">
+      Gérez vos utilisateurs, produits et commandes facilement depuis ce tableau de bord.
+    </p>
+  </div>
+</section>
+
+<!-- Cards Section -->
+<div class="container my-5">
+  <div class="row g-4 justify-content-center">
+    <!-- Users Card -->
+    <div class="col-md-4">
+      <div class="card shadow-sm hover-card" routerLink="/users">
+        <div class="card-body text-center">
+          <i class="bi bi-people display-1 text-primary mb-3"></i>
+          <h5 class="card-title">Users</h5>
+          <p class="card-text">Ajoutez, modifiez ou supprimez des utilisateurs facilement.</p>
+          <a routerLink="/users" class="btn btn-primary">Accéder</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Card -->
+    <div class="col-md-4">
+      <div class="card shadow-sm hover-card" routerLink="/products">
+        <div class="card-body text-center">
+          <i class="bi bi-box-seam display-1 text-success mb-3"></i>
+          <h5 class="card-title">Products</h5>
+          <p class="card-text">Gérez vos produits et inventaire de manière simple et rapide.</p>
+          <a routerLink="/products" class="btn btn-success">Accéder</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Card -->
+    <div class="col-md-4">
+      <div class="card shadow-sm hover-card" routerLink="/orders">
+        <div class="card-body text-center">
+          <i class="bi bi-receipt display-1 text-warning mb-3"></i>
+          <h5 class="card-title">Orders</h5>
+          <p class="card-text">Suivez vos commandes et gérez vos ventes efficacement.</p>
+          <a routerLink="/orders" class="btn btn-warning text-dark">Accéder</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

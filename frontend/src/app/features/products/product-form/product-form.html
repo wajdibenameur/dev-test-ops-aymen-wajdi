@@ -1,0 +1,45 @@
+<div class="card p-4 mb-3 shadow-sm">
+  <h5 class="mb-3">
+    {{ model.id ? 'Modifier Produit' : 'Ajouter Produit' }}
+  </h5>
+
+  <!-- Nom du produit -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Nom du produit</label>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Ex : Smartphone Samsung"
+      [(ngModel)]="model.nameProduct">
+  </div>
+
+  <!-- Prix -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Prix (DT)</label>
+    <input
+      type="number"
+      class="form-control"
+      placeholder="Ex : 1200"
+      [(ngModel)]="model.price">
+  </div>
+
+  <!-- Quantité -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Quantité en stock</label>
+    <input
+      type="number"
+      class="form-control"
+      placeholder="Ex : 50"
+      [(ngModel)]="model.quantity">
+  </div>
+
+  <!-- Actions -->
+  <div class="d-flex gap-2">
+    <button class="btn btn-success" (click)="save()">
+      💾 Enregistrer
+    </button>
+    <button class="btn btn-outline-secondary" (click)="close.emit(false)">
+      ❌ Annuler
+    </button>
+  </div>
+</div>

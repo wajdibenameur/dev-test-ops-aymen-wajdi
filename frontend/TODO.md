@@ -1,0 +1,2 @@
+- [x] Edit src/app/app.html: Add icons to navigation links and include a search bar in the navbar.
+- [x] Edit src/app/app.css: Ensure navbar is always horizontal, enlarge the "Ecommerce" title, add gradient background and enhanced shadows for decorations.

@@ -103,8 +103,55 @@ jobs:
         run: |
           docker push $IMAGE_NAME:latest
           docker push $IMAGE_NAME:$IMAGE_TAG
-
 # ======================================================
+# 2b. BUILD + DOCKER FRONTEND
+# ======================================================
+  frontend-deploy:
+    name: Build & Deploy Angular Frontend
+    runs-on: ubuntu-latest
+    needs: docker-deploy  # attendre que backend soit build et pushé
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # version LTS
+          cache: 'npm'
+
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./frontend  # mettre le chemin de ton projet Angular
+
+      - name: Build Angular Production
+        run: ng build --configuration production
+        working-directory: ./frontend
+
+      - name: Build Docker image for frontend
+        run: |
+          FRONT_IMAGE_NAME=wajdiuser/frontend-projectfed
+          DATE=$(date +%Y%m%d%H%M%S)
+          SHA=${GITHUB_SHA::8}
+          FRONT_IMAGE_TAG=prod-$DATE-$SHA
+          echo "FRONT_IMAGE_NAME=$FRONT_IMAGE_NAME" >> $GITHUB_ENV
+          echo "FRONT_IMAGE_TAG=$FRONT_IMAGE_TAG" >> $GITHUB_ENV
+          docker build -t $FRONT_IMAGE_NAME:latest -t $FRONT_IMAGE_NAME:$FRONT_IMAGE_TAG ./frontend
+          docker push $FRONT_IMAGE_NAME:latest
+          docker push $FRONT_IMAGE_NAME:$FRONT_IMAGE_TAG
+
+      - name: Deploy Frontend on Minikube
+        if: success()
+        shell: bash
+        run: |
+          kubectl apply -f k8s/frontend-deployment.yaml
+          kubectl apply -f k8s/frontend-service.yaml
+          kubectl get pods -o wide
+
+  # ======================================================
 # 3. DEPLOIEMENT KUBERNETES (MINIKUBE)
 # ======================================================
   kubernetes-deploy:

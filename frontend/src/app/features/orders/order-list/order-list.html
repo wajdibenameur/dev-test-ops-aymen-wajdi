@@ -1,0 +1,30 @@
+<table class="table table-bordered table-striped">
+  <thead class="table-light">
+    <tr>
+      <th>ID</th>
+      <th>User</th>
+      <th>Status</th>
+      <th>Total</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let o of orders">
+      <td>{{ o.id }}</td>
+      <td>{{ o.user.firstName }} {{ o.user.lastName }}</td>
+      <td>
+        <span class="badge bg-info">{{ o.status }}</span>
+      </td>
+      <td>{{ o.priceTotale }}</td>
+      <td>{{ o.dateCommande | date:'short' }}</td>
+      <td>
+        <button class="btn btn-sm btn-danger"
+                (click)="delete(o.id!)">
+          🗑️
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
