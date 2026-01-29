@@ -4,12 +4,12 @@
   <!-- USER -->
   <div class="mb-3">
     <label class="form-label fw-semibold">Client</label>
-    <select class="form-select" [(ngModel)]="request.userId" name="user">
-      <option [ngValue]="null" disabled>Choisir un utilisateur</option>
-      <option *ngFor="let u of users" [ngValue]="u.id">
-        {{ u.firstName }} {{ u.lastName }}
-      </option>
-    </select>
+    <select class="form-select" [(ngModel)]="selectedUserId" name="user">
+  <option [ngValue]="null" disabled>Choisir un utilisateur</option>
+  <option *ngFor="let u of users" [ngValue]="u.id">
+    {{ u.firstName }} {{ u.lastName }}
+  </option>
+</select>
   </div>
 
   <!-- PRODUITS -->

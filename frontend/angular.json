@@ -68,6 +68,9 @@
               "buildTarget": "frontend:build:development"
             }
           },
+          "options": {
+            "open": false
+          },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {

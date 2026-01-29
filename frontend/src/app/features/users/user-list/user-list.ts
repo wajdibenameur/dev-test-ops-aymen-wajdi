@@ -7,7 +7,7 @@ import { UserForm } from '../user-form/user-form';
 @Component({
   selector: 'app-user-list',
   standalone:true,
-  imports: [CommonModule,UserForm],
+  imports: [CommonModule],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css',
 })

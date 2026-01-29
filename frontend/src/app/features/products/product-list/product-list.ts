@@ -7,7 +7,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 @Component({
   selector: 'app-product-list',
   standalone:true,
-  imports: [ProductForm,CommonModule,CurrencyPipe],
+  imports: [ProductForm,CommonModule],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
 })
