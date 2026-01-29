@@ -158,12 +158,21 @@ jobs:
           docker push $FRONT_IMAGE_NAME:latest
           docker push $FRONT_IMAGE_NAME:$FRONT_IMAGE_TAG
 
-      - name: Deploy Frontend on Minikube
-        shell: bash
+  frontend-deploy-minikube:
+    name: Deploy Frontend on Minikube
+    runs-on: [ self-hosted, Windows, X64 ]
+    needs: frontend-deploy   # si tu gardes un job pour build Angular/Docker
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Angular Frontend
+        shell: powershell
         run: |
           kubectl apply -f k8s/frontend-deployment.yaml --validate=false
           kubectl apply -f k8s/frontend-service.yaml --validate=false
+          kubectl wait --for=condition=ready pod -l app=angular-frontend --timeout=180s
           kubectl get pods -o wide
+
+
 
   # ======================================================
   # 3. DEPLOIEMENT KUBERNETES (MINIKUBE)
@@ -216,6 +225,7 @@ jobs:
       - name: Check Pods Status
         shell: powershell
         run: kubectl get pods -o wide
+
 
   # ======================================================
   # 4. DEPLOIEMENT MONITORING (Prometheus + Grafana)
