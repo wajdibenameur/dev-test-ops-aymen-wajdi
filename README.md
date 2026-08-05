@@ -20,7 +20,7 @@ Le point fort du dépôt est la couverture de tests:
 ## Business case associé
 
 Voir le document de cadrage métier:
-- [business_case.md](../business-cases/ci-cd-devops-automation/business_case.md)
+- [business_case.md](./business_case.md)
 
 Ce document explique:
 - le besoin d'automatisation
